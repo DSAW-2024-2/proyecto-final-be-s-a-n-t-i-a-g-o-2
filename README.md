@@ -10,5 +10,4 @@ Santiago Urrego Rodríguez
 
 ## Despliegue:
 
-https://vercel.com/api/toolbar/link/proyecto-final-be-s-a-n-t-i-a-g-o-2.vercel.app?via=project-dashboard-alias-list&p=1&page=/
-
+https://proyecto-final-be-s-a-n-t-i-a-g-o-2.vercel.app
