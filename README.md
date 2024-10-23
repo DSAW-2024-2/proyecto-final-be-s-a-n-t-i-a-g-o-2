@@ -5,6 +5,7 @@ En este repo se encontrará toda la parte del backend de nuestro proyecto de whe
 ## Integrantes:
 
 Santiago Guttiérrez de Piñeres Barbosa
+
 Santiago Urrego Rodríguez
 
 ## Despliegue:
