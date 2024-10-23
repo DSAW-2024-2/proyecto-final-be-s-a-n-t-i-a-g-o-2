@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const { register, login, logout } = require('./controllers/authController');
+const { register, login, logout} = require('./controllers/authController');
 
 app.use(cors());
 app.use(express.json());
