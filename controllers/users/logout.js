@@ -1,4 +1,4 @@
-const { auth } = require('../config/firebase');
+const { auth } = require('../../config/firebase');
 const { signOut } = require('firebase/auth');
 
 const logout = async (req, res) => {

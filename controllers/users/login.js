@@ -1,4 +1,4 @@
-const { auth } = require('../config/firebase');
+const { auth } = require('../../config/firebase');
 const { signInWithEmailAndPassword } = require('firebase/auth');
 const jwt = require('jsonwebtoken');
 
@@ -8,8 +8,6 @@ const login = async (req, res) => {
 const { email, password } = req.body;
 
 try {
-    console.log('Iniciando sesión con:', email, password);  // Imprime los valores que se envían
-
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
@@ -21,12 +19,9 @@ try {
 
     res.status(200).json({ message: 'Inicio de sesión exitoso', token });
 } 
-catch (error) {
-    // Imprimir el error real que está ocurriendo
-    console.error('Error al iniciar sesión:', error.message);
-    res.status(400).json({ error: error.message });
+    catch (error) {
+        res.status(400).json({ error: 'Correo o contraseña incorrectos' });
 }
-}
-
+};
 
 module.exports = { login };
