@@ -13,7 +13,7 @@ router.post('/login', login);
 
 router.post('/logout', verifyToken, logout);
 
-router.post('/get', verifyToken, get);
+router.get('/get/:universidadID', verifyToken, get);
 
 module.exports = router;
 
