@@ -6,7 +6,22 @@ const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = ['http://localhost:5173', 'https://fe-proyectofinal.vercel.app'];
+
+app.use(cors({
+    origin: function(origin, callback) {
+        if (!origin) return callback(null, true);
+        const isAllowed = allowedOrigins.includes(origin);
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(bodyParser.json());
 
