@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const authRoutes = require('./routes/authRoutes');
+const authRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use('/', authRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Bienvenido!!');
+    res.send('Deskpinchados');
 });
 
 app.use((req, res) => {
