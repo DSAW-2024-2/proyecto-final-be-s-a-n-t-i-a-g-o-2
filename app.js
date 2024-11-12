@@ -1,31 +1,22 @@
-require('dotenv').config();
 const express = require('express');
+const userRoutes = require('./routes/userRoutes');
+const carRoutes = require('./routes/carRoutes');
+//const tripRoutes = require('./routes/tripRoutes');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const authRoutes = require('./routes/userRoutes');
+require('dotenv').config();
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:5173', 'https://fe-proyectofinal.vercel.app'];
-
 app.use(cors({
-    origin: function(origin, callback) {
-        if (!origin) return callback(null, true);
-        const isAllowed = allowedOrigins.includes(origin);
-        if (isAllowed) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    credentials: true
+    origin: ['http://localhost:5173', 'https://fe-proyectofinal.vercel.app'],
+    credentials: true,
 }));
 
 app.use(express.json());
-app.use(bodyParser.json());
 
-app.use('/', authRoutes);
+app.use('/users', userRoutes);
+app.use('/cars', carRoutes);
+//app.use('/trips', tripRoutes);
 
 app.get('/', (req, res) => {
     res.send('Deskpinchados');
