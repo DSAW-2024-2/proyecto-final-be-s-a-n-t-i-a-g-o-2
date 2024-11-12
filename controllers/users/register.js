@@ -5,18 +5,18 @@ const { getFirestore, doc, setDoc, getDoc } = require('firebase/firestore');
 const db = getFirestore();
 
 const register = async (req, res) => {
-    const { email, password, nombre, apellido, universidadID, contacto, foto } = req.body;
+    const { correo, contraseña, nombre, apellido, iduni, contacto, foto } = req.body;
 
-    if (!email || !password || !nombre || !apellido || !universidadID || !contacto) {
+    if (!correo || !contraseña || !nombre || !apellido || !iduni || !contacto) {
         return res.status(400).json({ error: 'Por favor, completa todos los campos', code: 400 });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(correo)) {
         return res.status(400).json({ error: 'Ingresa un correo electrónico válido', code: 400 });
     }
 
-    if (password.length < 8) {
+    if (contraseña.length < 8) {
         return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres.', code: 400 });
     }
 
@@ -26,11 +26,11 @@ const register = async (req, res) => {
     }
 
     const idRegex  = /^\d{1,6}$/;
-    if (!idRegex.test(universidadID)) {
+    if (!idRegex.test(iduni)) {
         return res.status(400).json({ error: 'El ID de la universidad debe contener solo números y máximo 6', code: 400 });
     }
 
-    const universidadDocRef = doc(db, 'conductores', universidadID);
+    const universidadDocRef = doc(db, 'conductores', iduni);
     const universidadDoc = await getDoc(universidadDocRef);
 
     if (universidadDoc.exists()) {
@@ -40,18 +40,17 @@ const register = async (req, res) => {
     let user;
 
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, correo, contraseña);
         user = userCredential.user;
 
         await setDoc(doc(db, 'conductores', user.uid), {
             nombre: nombre,
             apellido: apellido,
-            universidadID: universidadID,
-            correoCorporativo: email,
+            iduni: iduni,
+            correo: correo,
             contacto: contacto,
             foto: foto || null,
             uid: user.uid,
-            isDriver: false
         });
 
         res.status(201).json({ message: 'Conductor registrado exitosamente', user });
