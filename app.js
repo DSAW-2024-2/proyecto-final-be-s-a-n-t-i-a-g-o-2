@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const userRoutes = require('./routes/userRoutes');
 const carRoutes = require('./routes/carRoutes');
-//const tripRoutes = require('./routes/tripRoutes');
+const tripRoutes = require('./routes/tripRoutes');
 const cors = require('cors');
 
 const app = express();
@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.use('/users', userRoutes);
 app.use('/cars', carRoutes);
-//app.use('/trips', tripRoutes);
+app.use('/trips', tripRoutes);
 
 app.get('/', (req, res) => {
     res.send('Deskpinchados');
