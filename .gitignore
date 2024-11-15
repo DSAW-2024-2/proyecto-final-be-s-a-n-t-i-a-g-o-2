@@ -1,4 +1,4 @@
 node_modules/
 .env
 .vercel
-firebaseAdminConfig.json
+firebaseAdminConfig.jsongit rm --cached config/firebaseAdminConfig.json
