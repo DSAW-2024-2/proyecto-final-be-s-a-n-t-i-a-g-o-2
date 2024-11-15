@@ -4,7 +4,7 @@ const get =async (req, res) => {
 const uid = req.params.uid;
 
 try {
-    const q=query(collection(db, 'vehicles'), where('uid', '==', uid));
+    const q=query(collection(db, 'vehiculos'), where('uid', '==', uid));
     const querySnapshot=await getDocs(q);
 
     if(querySnapshot.empty){

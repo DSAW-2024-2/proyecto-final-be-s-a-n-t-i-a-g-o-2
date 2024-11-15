@@ -6,7 +6,7 @@ const add =async (req, res) => {
     const driverUID = req.user.uid;
 
     try{
-        const vehicleRef=doc(collection(db, 'vehicles'));
+        const vehicleRef=doc(collection(db, 'vehiculos'));
         await setDoc(vehicleRef, {
             driverUID: driverUID,
             placa: placa,
@@ -19,6 +19,7 @@ const add =async (req, res) => {
         res.status(200).json({message: 'Vehículo registrado correctamente'});
     }
     catch(error){
+        console.error(error);
         res.status(500).json({message: 'Error al registrar el vehículo'});
     }
 }
