@@ -5,23 +5,23 @@ const { getFirestore, doc, setDoc, getDoc } = require('firebase/firestore');
 const db = getFirestore();
 
 const register = async (req, res) => {
-    const { correo, contraseña, nombre, apellido, iduni, contacto, foto } = req.body;
+    const { email, password, name, lastname, iduni, contact, photo } = req.body;
 
-    if (!correo || !contraseña || !nombre || !apellido || !iduni || !contacto) {
+    if (!email || !password || !name || !lastname || !iduni || !contact) {
         return res.status(400).json({ error: 'Por favor, completa todos los campos', code: 400 });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(correo)) {
+    if (!emailRegex.test(email)) {
         return res.status(400).json({ error: 'Ingresa un correo electrónico válido', code: 400 });
     }
 
-    if (contraseña.length < 8) {
+    if (password.length < 8) {
         return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres.', code: 400 });
     }
 
     const contactNumberRegex  = /^\d{1,10}$/;
-    if (!contactNumberRegex.test(contacto)) {
+    if (!contactNumberRegex.test(contact)) {
         return res.status(400).json({ error: 'Número de contacto inválido', code: 400 });
     }
 
@@ -40,16 +40,16 @@ const register = async (req, res) => {
     let user;
 
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, correo, contraseña);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         user = userCredential.user;
 
         await setDoc(doc(db, 'conductores', user.uid), {
-            nombre: nombre,
-            apellido: apellido,
+            name: name,
+            lastname: lastname,
             iduni: iduni,
-            correo: correo,
-            contacto: contacto,
-            foto: foto || null,
+            email: email,
+            contact: contact,
+            photo: photo || null,
             uid: user.uid,
         });
 

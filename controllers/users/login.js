@@ -5,14 +5,14 @@ const jwt = require('jsonwebtoken');
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
 const login = async (req, res) => {
-const { correo, contraseña } = req.body;
+const { email, password } = req.body;
 
 try {
-    const userCredential = await signInWithEmailAndPassword(auth, correo, contraseña);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     const token = jwt.sign(
-        { uid: user.uid, correo: user.email },    
+        { uid: user.uid, email: user.email },    
         ACCESS_TOKEN_SECRET,                   
         { expiresIn: '1h' }                    
     );
