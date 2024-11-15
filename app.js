@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const userRoutes = require('./routes/userRoutes');
 const carRoutes = require('./routes/carRoutes');
 //const tripRoutes = require('./routes/tripRoutes');
 const cors = require('cors');
-require('dotenv').config();
 
 const app = express();
 
