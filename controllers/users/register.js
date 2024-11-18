@@ -51,6 +51,8 @@ const register = async (req, res) => {
             contact: contact,
             photo: photo || null,
             uid: user.uid,
+
+
         });
 
         res.status(201).json({ message: 'Conductor registrado exitosamente', user });
