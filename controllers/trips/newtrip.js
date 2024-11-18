@@ -13,17 +13,16 @@ const newtrip = async (req, res) => {
             return res.status(400).json({ error: 'El conductor no tiene un vehículo registrado.' });
         }
 
-        const vehiculos = vehicleSnapshot.docs[0].data();
         const vehicleID = vehicleSnapshot.docs[0].id;
 
         const tripData = {
             driverUID,
             vehicleID,
-            start,
+            start, 
             end,
             route,
             departure,
-            availableSeats: vehiculos.capacidad,
+            availableSeats,
             price,
             isFull: false,
             passengers: []
