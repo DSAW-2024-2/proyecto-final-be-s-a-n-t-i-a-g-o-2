@@ -2,8 +2,10 @@ const express = require('express');
 const { newtrip } = require('../controllers/trips/newtrip');
 const { gettrips } = require('../controllers/trips/gettrips');
 const { selecttrip } = require('../controllers/trips/selecttrip');
-//const { filterTrips } = require('../controllers/trips/filterTrips');
+const { filtertrips } = require('../controllers/trips/filtertrips');
+const { deletetrips } = require('../controllers/trips/deletetrips');
 const { verifyToken } = require('../middleware/authMiddleware');
+
 
 const router = express.Router();
 
@@ -13,6 +15,8 @@ router.get('/', gettrips);
 
 router.post('/select', verifyToken, selecttrip);
 
-//router.get('/filter', filterTrips);
+router.get('/filter', filtertrips);
+
+router.delete('/:tripID', verifyToken, deletetrips);
 
 module.exports = router;
