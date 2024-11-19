@@ -11,8 +11,8 @@ router.post('/add', verifyToken, add);
 
 router.get('/:vehicleuid', verifyToken, get);
 
-router.put('/:uid', verifyToken, modify);
+router.put('/:vehicleuid', verifyToken, modify);
 
-router.delete('/:uid', verifyToken, remove);
+router.delete('/:vehicleuid', verifyToken, remove);
 
 module.exports = router;

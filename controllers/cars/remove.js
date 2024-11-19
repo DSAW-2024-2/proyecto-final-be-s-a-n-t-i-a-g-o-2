@@ -2,19 +2,11 @@ const { getFirestore, collection, query, where, getDocs, doc, deleteDoc } = requ
 const db = getFirestore();
 
 const remove = async (req, res) => {
-    const uid = req.params.uid;
+    const { vehicleuid } = req.params;
 
     try {
-        const q = query(collection(db, 'vehiculos'), where('driverUID', '==', uid));
-        const querySnapshot = await getDocs(q);
+        const vehicleRef =doc(db, 'vehiculos', vehicleuid);
 
-        if (querySnapshot.empty) {
-            return res.status(404).json({ message: 'No se encontró ningún vehículo para este conductor' });
-        }
-
-        const vehicleId = querySnapshot.docs[0].id;
-
-        const vehicleRef = doc(db, 'vehiculos', vehicleId);
         await deleteDoc(vehicleRef);
 
         res.status(200).json({ message: 'Vehículo eliminado exitosamente' });

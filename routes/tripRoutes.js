@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post('/newtrip', verifyToken, newtrip);
 
-router.get('/', gettrips);
+router.get('/alltrips', gettrips);
 
 router.post('/select', verifyToken, selecttrip);
 
