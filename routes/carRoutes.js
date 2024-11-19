@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post('/add', verifyToken, add);
 
-router.get('/:uid', verifyToken, get);
+router.get('/:vehicleuid', verifyToken, get);
 
 router.put('/:uid', verifyToken, modify);
 

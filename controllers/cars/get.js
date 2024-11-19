@@ -1,22 +1,22 @@
-const {getFirestore, collection, query, where, getDocs} = require('firebase/firestore');
+const { getFirestore, doc, getDoc } = require('firebase/firestore');
 const db = getFirestore();
+
 const get =async (req, res) => {
-const uid = req.params.uid;
+    const { vehicleuid } = req.params;
 
-try {
-    const q=query(collection(db, 'vehiculos'), where('uid', '==', uid));
-    const querySnapshot=await getDocs(q);
+    try {
+        const driverDoc = await getDoc(doc(db, 'vehiculos', vehicleuid));
 
-    if(querySnapshot.empty){
-        res.status(404).json({message: 'Vehículo no encontrado'});
-    }
+        if (!driverDoc.exists()) {
+            return res.status(404).json({ error: 'Vehículo no encontrado.', code: 404 });
+        }
 
-    const vehicle=querySnapshot.docs[0].data();
-    res.status(200).json(vehicle);
-}
-catch(error){
-    res.status(500).json({error: 'Error al obtener el vehículo'});
+        const vehicleData = driverDoc.data();
+        res.status(200).json({ vehicle: vehicleData });
+    }catch(error){
+        console.error('Error al obtener la información del vehículo:', error);
+        res.status(500).json({error: 'Error al obtener el vehículo', code: 500});
     }
 };
 
-module.exports = {get};
+module.exports = { get };
