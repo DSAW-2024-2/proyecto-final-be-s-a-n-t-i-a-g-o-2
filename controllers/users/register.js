@@ -1,6 +1,6 @@
 const { auth } = require('../../config/firebase');
 const { createUserWithEmailAndPassword } = require('firebase/auth');
-const { getFirestore, doc, setDoc, getDoc } = require('firebase/firestore');
+const { getFirestore, doc, setDoc, getDocs, collection, query, where } = require('firebase/firestore');
 
 const db = getFirestore();
 
@@ -20,20 +20,25 @@ const register = async (req, res) => {
         return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres.', code: 400 });
     }
 
-    const contactNumberRegex  = /^\d{1,10}$/;
+    const contactNumberRegex = /^\d{1,10}$/;
     if (!contactNumberRegex.test(contact)) {
         return res.status(400).json({ error: 'Número de contacto inválido', code: 400 });
     }
 
-    const idRegex  = /^\d{1,6}$/;
+    const idRegex = /^\d{1,6}$/;
     if (!idRegex.test(iduni)) {
         return res.status(400).json({ error: 'El ID de la universidad debe contener solo números y máximo 6', code: 400 });
     }
 
-    const universidadDocRef = doc(db, 'conductores', iduni);
-    const universidadDoc = await getDoc(universidadDocRef);
+    // Verifica si ya existe un documento con el mismo iduni
+    const universidadQuery = query(
+        collection(db, 'conductores'),
+        where('iduni', '==', iduni)
+    );
 
-    if (universidadDoc.exists()) {
+    const querySnapshot = await getDocs(universidadQuery);
+
+    if (!querySnapshot.empty) {
         return res.status(400).json({ error: 'El ID de universidad ya está registrado.', code: 400 });
     }
 
@@ -51,8 +56,6 @@ const register = async (req, res) => {
             contact: contact,
             photo: photo || null,
             uid: user.uid,
-
-
         });
 
         res.status(201).json({ message: 'Conductor registrado exitosamente', user });
@@ -61,16 +64,7 @@ const register = async (req, res) => {
             await auth.currentUser.delete();
         }
 
-        let errorMessage = 'Error al registrar al conductor.';
-        if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'El correo electrónico ya está en uso.';
-        } else if (error.code === 'auth/invalid-email') {
-            errorMessage = 'El correo electrónico no es válido.';
-        } else if (error.code === 'auth/weak-password') {
-            errorMessage = 'La contraseña debe tener al menos 6 caracteres.';
-        }
-
-        res.status(400).json({ error: errorMessage });
+        res.status(400).json({ error: error.message });
     }
 };
 
