@@ -3,7 +3,7 @@ const db = getFirestore();
 
 const modify = async (req, res) => {
     const { uid } = req.params;
-    const { name, lastname, iduni, contact, photo } = req.body;
+    const { name, lastname, contact, photo } = req.body;
 
     if (!name && !lastname && !iduni && !contact && !photo) {
         return res.status(400).json({ error: 'Se requiere al menos un campo para modificar.', code: 400 });
@@ -15,7 +15,6 @@ const modify = async (req, res) => {
         const updates = {};
         if (name) updates.name = name;
         if (lastname) updates.lastname = lastname;
-        if (iduni) updates.iduni = iduni;
         if (contact) updates.contact = contact;
         if (photo) updates.photo = photo;
 
