@@ -6,7 +6,6 @@ const {get} = require('../controllers/users/get');
 const {modify} = require('../controllers/users/modify');
 
 const {verifyToken} = require('../middleware/authMiddleware');
-
 const router = express.Router();
 
 router.post('/register', register);
