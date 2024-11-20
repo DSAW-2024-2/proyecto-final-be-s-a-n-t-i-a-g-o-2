@@ -18,7 +18,7 @@ router.post('/select', verifyToken, selecttrip);
 
 router.get('/filter', filtertrips);
 
-router.get('/:driverUID/:departure', verifyToken, filteruniqueid);
+router.get('/:tripID', getTripById); // Nueva ruta para obtener un viaje por ID
 
 router.delete('/:tripID', verifyToken, deletetrips);
 
