@@ -4,6 +4,7 @@ const { gettrips } = require('../controllers/trips/gettrips');
 const { selecttrip } = require('../controllers/trips/selecttrip');
 const { filtertrips } = require('../controllers/trips/filtertrips');
 const { deletetrips } = require('../controllers/trips/deletetrips');
+const { filteruniqueid } = require('../controllers/trips/GetByIdAndDeparture');
 const { verifyToken } = require('../middleware/authMiddleware');
 
 
@@ -16,6 +17,8 @@ router.get('/alltrips', gettrips);
 router.post('/select', verifyToken, selecttrip);
 
 router.get('/filter', filtertrips);
+
+router.get('/:driverUID/:departure', verifyToken, filteruniqueid);
 
 router.delete('/:tripID', verifyToken, deletetrips);
 
