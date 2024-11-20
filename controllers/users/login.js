@@ -40,6 +40,7 @@ const login = async (req, res) => {
     res.status(200).json({
     message: 'Inicio de sesión exitoso',
     token: jwtToken,
+    user: userResponse,
     });
     } catch (error) {
     console.error('Error al iniciar sesión:', error);
