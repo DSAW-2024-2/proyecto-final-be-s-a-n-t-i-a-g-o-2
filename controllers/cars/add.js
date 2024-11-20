@@ -1,11 +1,12 @@
 const multer = require('multer');
 const { getFirestore, doc, setDoc, collection, query, where, getDocs } = require('firebase/firestore');
-const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage');
+const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage');
 const { v4: uuidv4 } = require('uuid');
 
 const db = getFirestore();
 const storage = getStorage();
 
+// Configuración de multer para manejar archivos en memoria
 const upload = multer({
     storage: multer.memoryStorage(),
     fileFilter: (req, file, cb) => {
@@ -17,6 +18,7 @@ const upload = multer({
     }
 });
 
+// Función para subir archivos a Firebase Storage
 const uploadFileToStorage = async (file, path) => {
     const storageRef = ref(storage, path);
     await uploadBytes(storageRef, file.buffer, { contentType: file.mimetype });
@@ -24,7 +26,9 @@ const uploadFileToStorage = async (file, path) => {
     return downloadURL;
 };
 
+// Función para manejar la adición de un vehículo
 const add = async (req, res) => {
+    // Utilizar multer para procesar los campos 'carro' y 'soat', permitiendo que sean opcionales
     upload.fields([
         { name: 'carro', maxCount: 1 },
         { name: 'soat', maxCount: 1 }
@@ -38,16 +42,14 @@ const add = async (req, res) => {
         const { placa, capacidad, marca, modelo } = req.body;
         const driverUID = req.user.uid;
 
+        // Validación de campos requeridos, excluyendo las imágenes
         if (!placa || !capacidad || !marca || !modelo) {
             return res.status(400).json({ message: 'Por favor, completa todos los campos requeridos.' });
         }
 
-        if (!req.files || !req.files['carro'] || !req.files['soat']) {
-            return res.status(400).json({ message: 'Por favor, sube tanto la foto del vehículo como la foto del SOAT.' });
-        }
-
-        const carroPhoto = req.files['carro'][0];
-        const soatPhoto = req.files['soat'][0];
+        // Las imágenes son opcionales, por lo que no se valida su presencia
+        const carroPhoto = req.files['carro'] ? req.files['carro'][0] : null;
+        const soatPhoto = req.files['soat'] ? req.files['soat'][0] : null;
 
         try {
             const vehicleQuery = query(
@@ -64,16 +66,27 @@ const add = async (req, res) => {
             const vehicleRef = doc(collection(db, 'vehiculos'));
             const vehicleID = vehicleRef.id;
 
-            const carroPhotoPath = `vehiculos/${driverUID}/carro-${uuidv4()}-${carroPhoto.originalname}`;
-            const soatPhotoPath = `vehiculos/${driverUID}/soat-${uuidv4()}-${soatPhoto.originalname}`;
+            // Inicializar variables para las URLs de las fotos
+            let carroPhotoURL = null;
+            let soatPhotoURL = null;
 
-            req.uploadedFiles = { carroPhotoPath, soatPhotoPath };
+            // Inicializar un objeto para almacenar las rutas de archivos subidos
+            req.uploadedFiles = {};
 
-            const [carroPhotoURL, soatPhotoURL] = await Promise.all([
-                uploadFileToStorage(carroPhoto, carroPhotoPath),
-                uploadFileToStorage(soatPhoto, soatPhotoPath)
-            ]);
+            // Subir las fotos solo si están presentes
+            if (carroPhoto) {
+                const carroPhotoPath = `vehiculos/${driverUID}/carro-${uuidv4()}-${carroPhoto.originalname}`;
+                req.uploadedFiles.carroPhotoPath = carroPhotoPath;
+                carroPhotoURL = await uploadFileToStorage(carroPhoto, carroPhotoPath);
+            }
 
+            if (soatPhoto) {
+                const soatPhotoPath = `vehiculos/${driverUID}/soat-${uuidv4()}-${soatPhoto.originalname}`;
+                req.uploadedFiles.soatPhotoPath = soatPhotoPath;
+                soatPhotoURL = await uploadFileToStorage(soatPhoto, soatPhotoPath);
+            }
+
+            // Guardar la información del vehículo en Firestore
             await setDoc(vehicleRef, {
                 carid: vehicleID,
                 driverUID: driverUID,
@@ -81,8 +94,8 @@ const add = async (req, res) => {
                 capacidad: capacidad,
                 marca: marca,
                 modelo: modelo,
-                carro: carroPhotoURL,
-                soat: soatPhotoURL,
+                carro: carroPhotoURL, // Puede ser una URL o null
+                soat: soatPhotoURL,   // Puede ser una URL o null
                 createdAt: new Date().toISOString()
             });
 
@@ -90,17 +103,18 @@ const add = async (req, res) => {
         } catch (error) {
             console.error('Error al registrar el vehículo:', error);
 
+            // Si hubo archivos subidos, intentar eliminarlos para mantener la consistencia
             if (req.uploadedFiles) {
                 const deletePromises = [];
 
                 if (req.uploadedFiles.carroPhotoPath) {
                     const carroStorageRef = ref(storage, req.uploadedFiles.carroPhotoPath);
-                    deletePromises.push(carroStorageRef.delete().catch(() => {}));
+                    deletePromises.push(deleteObject(carroStorageRef).catch(() => {}));
                 }
 
                 if (req.uploadedFiles.soatPhotoPath) {
                     const soatStorageRef = ref(storage, req.uploadedFiles.soatPhotoPath);
-                    deletePromises.push(soatStorageRef.delete().catch(() => {}));
+                    deletePromises.push(deleteObject(soatStorageRef).catch(() => {}));
                 }
 
                 await Promise.all(deletePromises);
