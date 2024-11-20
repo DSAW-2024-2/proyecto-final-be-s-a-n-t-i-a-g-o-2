@@ -9,9 +9,9 @@ const router = express.Router();
 
 router.post('/add', verifyToken, add);
 
-router.get('/:vehicleuid', verifyToken, get);
+router.get('/:carid', verifyToken, get);
 
-router.put('/:vehicleuid', verifyToken, modify);
+router.put('/:carid', verifyToken, modify);
 
 router.delete('/:vehicleuid', verifyToken, remove);
 
