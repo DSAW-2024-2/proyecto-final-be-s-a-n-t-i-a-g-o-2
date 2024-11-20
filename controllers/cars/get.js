@@ -3,7 +3,7 @@ const { db } = require('../../config/firebase');
 const { doc, getDoc } = require('firebase/firestore');
 
 const get = async (req, res) => {
-    const { vehicleuid } = req.params;
+    const { carid } = req.params;
 
     try {
     const vehicleDoc = await getDoc(doc(db, 'vehiculos', carid));
