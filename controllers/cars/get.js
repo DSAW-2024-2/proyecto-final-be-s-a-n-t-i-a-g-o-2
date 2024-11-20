@@ -6,7 +6,7 @@ const get = async (req, res) => {
     const { vehicleuid } = req.params;
 
     try {
-    const vehicleDoc = await getDoc(doc(db, 'vehiculos', vehicleuid));
+    const vehicleDoc = await getDoc(doc(db, 'vehiculos', carid));
 
     if (!vehicleDoc.exists()) {
         return res.status(404).json({ error: 'Vehículo no encontrado.', code: 404 });
